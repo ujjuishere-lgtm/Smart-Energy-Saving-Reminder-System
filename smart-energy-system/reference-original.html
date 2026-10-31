@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Energy Saving Reminder System</title>
+<style>
+:root{--green:#087f5b;--green2:#10a36e;--mint:#e8f8ef;--ink:#15332d;--muted:#667b75;--bg:#f4f8f6;--card:#fff;--line:#e1ece6;--blue:#eaf5ff}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Inter,Arial,sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:100vh}
+.sidebar{background:linear-gradient(165deg,#063d35,#052b29);color:#fff;padding:26px 18px;display:flex;flex-direction:column;gap:30px}
+.brand{display:flex;gap:11px;align-items:center;padding:4px 5px}
+.brand-mark{width:43px;height:43px;border-radius:14px;background:#18a66f;display:grid;place-items:center;font-size:25px}
+.brand h2{font-size:18px;line-height:1.2}.brand small{color:#b9e8d1;font-size:11px}
+.nav{display:grid;gap:8px}
+.nav button{background:transparent;color:#d5eee4;border:0;text-align:left;padding:13px 14px;border-radius:12px;display:flex;gap:12px;align-items:center}
+.nav button.active,.nav button:hover{background:#0b7256;color:white}
+.side-note{margin-top:auto;background:#ffffff12;border:1px solid #ffffff20;border-radius:16px;padding:18px;text-align:center}
+.side-note .earth{font-size:48px;margin-bottom:7px}.side-note p{font-size:13px;color:#c8e8db}
+main{min-width:0}
+.topbar{height:82px;background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 30px;gap:16px}
+.topbar h1{font-size:21px}.topbar p{font-size:13px;color:var(--muted)}
+.top-right{display:flex;align-items:center;gap:12px}.date{color:var(--muted);font-size:13px}
+.icon-btn{border:1px solid var(--line);background:white;border-radius:10px;padding:9px 11px}
+.content{padding:26px;max-width:1600px;margin:auto}
+.hero{background:linear-gradient(110deg,#d9f5e6,#d9f1ff);border-radius:22px;padding:30px;display:flex;justify-content:space-between;align-items:center;gap:22px;overflow:hidden;position:relative}
+.hero-copy{max-width:600px;position:relative;z-index:1}.eyebrow{display:inline-block;color:var(--green);background:#ffffffb8;border-radius:30px;padding:6px 11px;font-size:12px;font-weight:700;margin-bottom:12px}
+.hero h2{font-size:clamp(27px,3vw,40px);line-height:1.12;letter-spacing:-1px;margin-bottom:12px}.hero p{color:#456b60;max-width:510px;margin-bottom:20px}
+.primary{background:var(--green);color:white;border:0;border-radius:10px;padding:12px 17px;font-weight:700;box-shadow:0 5px 12px #087f5b20}
+.primary:hover{background:#05694b}.hero-art{font-size:108px;min-width:150px;text-align:center;filter:drop-shadow(0 10px 12px #1b745322);transform:rotate(-5deg)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:20px 0}
+.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:17px;padding:20px;box-shadow:0 5px 20px #15332d05}
+.stat-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.stat-icon{width:41px;height:41px;border-radius:13px;background:var(--mint);display:grid;place-items:center;font-size:21px}
+.change{font-size:12px;color:var(--green);font-weight:700}.stat label{display:block;color:var(--muted);font-size:13px;margin-top:15px}.stat strong{font-size:27px;display:block;margin-top:3px}.stat small{color:var(--muted);font-size:12px}
+.columns{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(300px,.9fr);gap:18px;margin-bottom:18px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px}.panel-head h3{font-size:17px}.panel-head p{font-size:12px;color:var(--muted)}
+select,input{border:1px solid #d6e5dd;background:#fff;color:var(--ink);padding:10px 11px;border-radius:9px;width:100%;outline:none}
+input:focus,select:focus{border-color:var(--green);box-shadow:0 0 0 3px #10a36e18}
+.chart{height:200px;display:flex;align-items:end;justify-content:space-around;gap:12px;padding:12px 4px 0;border-bottom:1px solid var(--line);background:repeating-linear-gradient(to top,transparent 0,transparent 48px,#edf3ef 49px,#edf3ef 50px)}
+.bar-wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:end;gap:7px;flex:1;min-width:0}
+.bar{width:min(35px,75%);border-radius:7px 7px 2px 2px;background:linear-gradient(#35c58a,#07875c);min-height:8px;transition:height .5s}
+.bar-wrap span{font-size:11px;color:var(--muted)}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+.full{grid-column:1/-1}.result{margin-top:15px;background:var(--mint);border-radius:12px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:10px}.result small{display:block;color:var(--muted)}.result strong{font-size:25px;color:var(--green)}
+.reminder-list{display:grid;gap:0}.reminder{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #edf2ef}.reminder:last-child{border-bottom:0}
+.reminder input[type=checkbox]{width:18px;height:18px;accent-color:var(--green);flex-shrink:0}
+.rem-icon{width:39px;height:39px;flex-shrink:0;border-radius:50%;background:#fff3d6;display:grid;place-items:center;font-size:19px}
+.reminder-copy{flex:1;min-width:0}.reminder-copy strong{font-size:13px;display:block}.reminder-copy small{font-size:11px;color:var(--muted)}
+.pill{font-size:10px;border-radius:7px;padding:5px 7px;background:#dff8e8;color:#087747;white-space:nowrap}
+.tips{display:grid;gap:12px}.tip{display:flex;gap:10px;align-items:flex-start;font-size:13px}.check{background:#dff7e9;color:#087f5b;width:23px;height:23px;border-radius:50%;display:grid;place-items:center;flex-shrink:0;font-weight:bold}
+.add-reminder{display:flex;gap:8px;margin-top:14px}.add-reminder input{min-width:0}.add-reminder button{white-space:nowrap}
+footer{margin-top:20px;padding:17px 20px;background:var(--mint);border-radius:14px;display:flex;justify-content:space-between;gap:12px;color:#27614d;font-size:13px}
+.toast{position:fixed;right:22px;bottom:22px;background:#073f35;color:white;padding:13px 18px;border-radius:12px;box-shadow:0 8px 25px #0002;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;z-index:5}.toast.show{opacity:1;transform:translateY(0)}
+@media(max-width:1100px){.app{grid-template-columns:205px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}.hero-art{font-size:80px}}
+@media(max-width:700px){.app{display:block}.sidebar{padding:12px;gap:12px}.brand{padding:2px}.brand-mark{width:37px;height:37px}.nav{display:flex;overflow:auto;gap:5px}.nav button{white-space:nowrap;padding:9px 11px;font-size:12px}.side-note{display:none}.topbar{height:auto;padding:16px;align-items:flex-start}.topbar h1{font-size:17px}.date{display:none}.content{padding:14px}.hero{padding:22px}.hero-art{font-size:62px;min-width:60px}.hero p{font-size:14px}.stats{gap:10px}.stat{padding:14px}.stat strong{font-size:22px}.stat label{font-size:12px}.panel{padding:16px}.columns{gap:13px}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}footer{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark">⚡</div><div><h2>Smart Energy</h2><small>Save Today, Greener Tomorrow</small></div></div>
+  <nav class="nav" aria-label="Main navigation">
+    <button class="active" data-target="dashboard">⌂ Dashboard</button>
+    <button data-target="energy">▤ Energy Calculator</button>
+    <button data-target="bill">▦ Bill Calculator</button>
+    <button data-target="reminders">♧ Reminders</button>
+    <button data-target="tips">♧ Energy Tips</button>
+  </nav>
+  <div class="side-note"><div class="earth">🌍</div><strong>Small Steps,<br>Big Difference</strong><p>Every unit saved helps our planet.</p></div>
+</aside>
+<main>
+  <header class="topbar"><div><h1>Hello, energy saver! ☀️</h1><p>Save energy. Save money. Save the planet.</p></div><div class="top-right"><span class="date" id="today"></span><button class="icon-btn" id="themeToggle" title="Toggle light/dark mode" aria-label="Toggle theme">◐</button></div></header>
+  <div class="content" id="dashboard">
+    <section class="hero">
+      <div class="hero-copy"><span class="eyebrow">✦ YOUR GREENER HOME STARTS HERE</span><h2>Smart Energy Saving<br><span style="color:#087f5b">Reminder System</span></h2><p>Track your electricity use, estimate your bill, and build simple habits for a more energy-efficient future.</p><button class="primary" id="startSaving">🌿 Start Saving</button></div>
+      <div class="hero-art" aria-hidden="true">🏡</div>
+    </section>
+    <section class="stats" aria-label="Energy summary">
+      <article class="stat"><div class="stat-top"><span class="stat-icon">⚡</span><span class="change">↓ 12%</span></div><label>Weekly Energy Usage</label><strong><span id="weeklyUsage">128</span> kWh</strong><small>Example dashboard data</small></article>
+      <article class="stat"><div class="stat-top"><span class="stat-icon">₹</span><span class="change">Track your cost</span></div><label>Estimated Electricity Bill</label><strong id="billStat">₹ 1,088</strong><small>Based on 128 units × ₹8.50</small></article>
+      <article class="stat"><div class="stat-top"><span class="stat-icon">🌱</span><span class="change">Keep it up!</span></div><label>Estimated CO₂ Avoided</label><strong>25.6 kg</strong><small>Illustrative estimate</small></article>
+      <article class="stat"><div class="stat-top"><span class="stat-icon">🔔</span><span class="change" id="completedCount">0 completed</span></div><label>Today's Reminders</label><strong id="reminderCount">5</strong><small>Check off tasks as you finish</small></article>
+    </section>
+    <div class="columns">
+      <section class="panel" id="energy"><div class="panel-head"><div><h3>▥ Your Energy Usage</h3><p>Sample daily consumption in kWh</p></div><select id="usageRange" style="width:auto"><option value="week">Last 7 days</option><option value="weekday">Weekdays only</option></select></div><div class="chart" id="usageChart" aria-label="Energy usage bar chart"></div><p style="font-size:11px;color:var(--muted);margin-top:12px">Demo values only — replace with your household readings.</p></section>
+      <section class="panel" id="bill"><div class="panel-head"><div><h3>▦ Electricity Bill Calculator</h3><p>Estimate the energy charge for your usage</p></div></div><div class="form-grid"><div class="field"><label for="units">Units consumed (kWh)</label><input id="units" type="number" min="0" step="1" value="128"></div><div class="field"><label for="rate">Rate per unit (₹)</label><input id="rate" type="number" min="0" step="0.01" value="8.5"></div><div class="field full"><button class="primary" id="calculate" style="width:100%">Calculate Bill</button></div></div><div class="result"><div><small>Estimated energy charge</small><strong id="billResult">₹ 1,088.00</strong></div><span style="font-size:28px">💡</span></div><p style="font-size:11px;color:var(--muted);margin-top:10px">Excludes fixed charges, taxes, and tariff slabs.</p></section>
+    </div>
+    <div class="columns">
+      <section class="panel" id="reminders"><div class="panel-head"><div><h3>♧ Smart Reminders</h3><p>Tick a task when it is done</p></div><span class="pill" id="reminderBadge">5 tasks</span></div><div class="reminder-list" id="reminderList">
+        <label class="reminder"><input type="checkbox"><span class="rem-icon">💡</span><span class="reminder-copy"><strong>Turn off unused lights</strong><small>Every day · 6:00 PM</small></span><span class="pill">Daily</span></label>
+        <label class="reminder"><input type="checkbox"><span class="rem-icon">🔌</span><span class="reminder-copy"><strong>Unplug fully charged devices</strong><small>Every day · 8:00 PM</small></span><span class="pill">Daily</span></label>
+        <label class="reminder"><input type="checkbox"><span class="rem-icon">☀️</span><span class="reminder-copy"><strong>Use natural daylight</strong><small>Tomorrow · 10:00 AM</small></span><span class="pill">Tip</span></label>
+        <label class="reminder"><input type="checkbox"><span class="rem-icon">❄️</span><span class="reminder-copy"><strong>Set AC to 24–26°C</strong><small>When using air conditioning</small></span><span class="pill">Tip</span></label>
+        <label class="reminder"><input type="checkbox"><span class="rem-icon">🧺</span><span class="reminder-copy"><strong>Run full laundry loads</strong><small>Weekend · 9:00 AM</small></span><span class="pill">Weekly</span></label>
+      </div><form class="add-reminder" id="addReminderForm"><input id="newReminder" type="text" maxlength="70" placeholder="Add a reminder..." aria-label="New reminder" required><button class="primary" type="submit">+ Add</button></form></section>
+      <section class="panel" id="tips"><div class="panel-head"><div><h3>✦ Energy-Saving Tips</h3><p>Small actions make a difference</p></div></div><div class="tips">
+        <div class="tip"><span class="check">✓</span><span>Switch off lights, fans, and appliances when not in use.</span></div>
+        <div class="tip"><span class="check">✓</span><span>Choose LED bulbs for efficient lighting.</span></div>
+        <div class="tip"><span class="check">✓</span><span>Unplug chargers and electronics when fully charged.</span></div>
+        <div class="tip"><span class="check">✓</span><span>Use energy-efficient appliances and eco modes.</span></div>
+        <div class="tip"><span class="check">✓</span><span>Use daylight and ventilation whenever practical.</span></div>
+        <div class="tip"><span class="check">✓</span><span>Compare your monthly meter readings to spot changes.</span></div>
+      </div><div class="result" style="margin-top:20px"><div><small>Today's challenge</small><strong style="font-size:17px">Save one unit of energy</strong></div><span style="font-size:27px">🌿</span></div></section>
+    </div>
+    <footer><strong>🌱 “Conserve Energy. Conserve Life.”</strong><span>Built for a smarter, more sustainable tomorrow · <span id="year"></span></span></footer>
+  </div>
+</main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+const $ = (id) => document.getElementById(id);
+const toast = (message) => {
+  $('toast').textContent = message;
+  $('toast').classList.add('show');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => $('toast').classList.remove('show'), 2600);
+};
+$('today').textContent = new Date().toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric',year:'numeric'});
+$('year').textContent = new Date().getFullYear();
+
+const weekData = [16,22,15,27,24,21,16];
+const weekdayData = [16,22,15,27,24];
+const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+function renderChart() {
+  const values = $('usageRange').value === 'weekday' ? weekdayData : weekData;
+  const labels = $('usageRange').value === 'weekday' ? days.slice(0,5) : days;
+  $('usageChart').innerHTML = values.map((v,i) =>
+    `<div class="bar-wrap" title="${v} kWh"><span>${v}</span><div class="bar" style="height:${v/30*72}%"></div><span>${labels[i]}</span></div>`
+  ).join('');
+}
+renderChart();
+$('usageRange').addEventListener('change',renderChart);
+
+function calculateBill() {
+  const units = Number($('units').value);
+  const rate = Number($('rate').value);
+  if (!Number.isFinite(units) || !Number.isFinite(rate) || units < 0 || rate < 0 || $('units').value === '' || $('rate').value === '') {
+    toast('Please enter valid non-negative numbers.');
+    return;
+  }
+  const total = units * rate;
+  $('billResult').textContent = total.toLocaleString('en-IN',{style:'currency',currency:'INR'});
+  $('billStat').textContent = total.toLocaleString('en-IN',{style:'currency',currency:'INR',maximumFractionDigits:0});
+}
+$('calculate').addEventListener('click',calculateBill);
+$('units').addEventListener('input',calculateBill);
+$('rate').addEventListener('input',calculateBill);
+
+function updateReminderStats() {
+  const boxes = [...document.querySelectorAll('#reminderList input[type="checkbox"]')];
+  const done = boxes.filter(b => b.checked).length;
+  $('reminderCount').textContent = boxes.length;
+  $('completedCount').textContent = `${done} completed`;
+  $('reminderBadge').textContent = `${done}/${boxes.length} done`;
+}
+$('reminderList').addEventListener('change',updateReminderStats);
+$('addReminderForm').addEventListener('submit',(event) => {
+  event.preventDefault();
+  const text = $('newReminder').value.trim();
+  if (!text) return;
+  const label = document.createElement('label');
+  label.className = 'reminder';
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  const icon = document.createElement('span');
+  icon.className = 'rem-icon';
+  icon.textContent = '🌿';
+  const copy = document.createElement('span');
+  copy.className = 'reminder-copy';
+  const title = document.createElement('strong');
+  title.textContent = text;
+  const sub = document.createElement('small');
+  sub.textContent = 'Custom reminder · Today';
+  copy.append(title,sub);
+  const pill = document.createElement('span');
+  pill.className = 'pill';
+  pill.textContent = 'Custom';
+  label.append(checkbox,icon,copy,pill);
+  $('reminderList').append(label);
+  $('newReminder').value = '';
+  updateReminderStats();
+  toast('Reminder added!');
+});
+$('startSaving').addEventListener('click',() => {
+  $('reminders').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('Choose a reminder to start saving energy.');
+});
+document.querySelectorAll('.nav button').forEach(button => button.addEventListener('click',() => {
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  button.classList.add('active');
+  $(button.dataset.target).scrollIntoView({behavior:'smooth',block:'start'});
+}));
+$('themeToggle').addEventListener('click',() => {
+  const dark = document.body.classList.toggle('dark');
+  if (dark) {
+    document.documentElement.style.setProperty('--bg','#101c19');
+    document.documentElement.style.setProperty('--card','#172722');
+    document.documentElement.style.setProperty('--ink','#e6f4ed');
+    document.documentElement.style.setProperty('--muted','#a5bdb2');
+    document.documentElement.style.setProperty('--line','#2b4238');
+    document.querySelectorAll('input,select').forEach(el=>{el.style.background='#172722';el.style.color='#e6f4ed';el.style.borderColor='#385347'});
+    toast('Dark mode enabled');
+  } else {
+    document.documentElement.style.setProperty('--bg','#f4f8f6');
+    document.documentElement.style.setProperty('--card','#fff');
+    document.documentElement.style.setProperty('--ink','#15332d');
+    document.documentElement.style.setProperty('--muted','#667b75');
+    document.documentElement.style.setProperty('--line','#e1ece6');
+    document.querySelectorAll('input,select').forEach(el=>{el.style.background='#fff';el.style.color='#15332d';el.style.borderColor='#d6e5dd'});
+    toast('Light mode enabled');
+  }
+});
+calculateBill();
+updateReminderStats();
+</script>
+</body>
+</html>
